@@ -6,7 +6,7 @@ import { Token }                from '../../models/auth/token.model';
 
 @Injectable()
 export class AuthService {
-  private baseUrl = 'http://localhost:8082/api/auth';
+  private baseUrl = 'https://ms1-u7g6.onrender.com/api/auth';
 
   constructor(private http: HttpClient) { }
 
@@ -14,3 +14,4 @@ export class AuthService {
     return this.http.post<Token>(`${this.baseUrl}/login`, creds);
   }
 }
+

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AreaService {
-  private url = 'http://localhost:8080/api/areas';
+  private url = 'https://ms2-rqe2.onrender.com/api/areas';
 
   constructor(private http: HttpClient) {}
 

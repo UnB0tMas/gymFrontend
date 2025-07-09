@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class MembresiaService {
   // Cambia la URL si tu backend usa otro puerto o ruta
-  private url = 'http://localhost:8080/api/membresias';
+  private url = 'https://ms2-rqe2.onrender.com/api/membresias';
 
   constructor(private http: HttpClient) {}
 

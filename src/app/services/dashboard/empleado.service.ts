@@ -5,7 +5,8 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class EmpleadoService {
-  private url = 'http://localhost:8080/api/empleados';
+  private url = 'https://ms2-rqe2.onrender.com//api/empleados';
+
 
   constructor(private http: HttpClient) {}
 

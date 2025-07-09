@@ -9,7 +9,7 @@ import { ProductoResponseDTO, ProductoCreateDTO } from '../../models/dashboard/p
   providedIn: 'root'
 })
 export class ProductoService {
-  private readonly apiUrl = 'http://localhost:8081/api/productos';
+  private readonly apiUrl = 'https://ms3-3enf.onrender.com/api/productos';
 
   constructor(private http: HttpClient) {}
 

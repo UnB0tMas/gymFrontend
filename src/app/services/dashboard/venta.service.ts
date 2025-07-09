@@ -8,7 +8,7 @@ import { VentaCreateDTO, VentaResponseDTO } from '../../models/dashboard/venta.m
   providedIn: 'root'
 })
 export class VentaService {
-  private readonly apiUrl = 'http://localhost:8081/api/ventas';
+  private readonly apiUrl = 'https://ms3-3enf.onrender.com/api/ventas';
 
   constructor(private http: HttpClient) {}
 

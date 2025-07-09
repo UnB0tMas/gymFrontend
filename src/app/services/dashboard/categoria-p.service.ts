@@ -9,7 +9,7 @@ import { CategoriaPResponseDTO, CategoriaPCreateDTO } from '../../models/dashboa
   providedIn: 'root'
 })
 export class CategoriaPService {
-  private readonly apiUrl = 'http://localhost:8081/api/categorias';
+  private readonly apiUrl = 'https://ms3-3enf.onrender.com/api/categorias';
 
   constructor(private http: HttpClient) {}
 

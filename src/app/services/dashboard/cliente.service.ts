@@ -8,8 +8,9 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ClienteService {
-  private url = 'http://localhost:8080/api/clientes';
-  private membresiaUrl = 'http://localhost:8080/api/membresias';
+  private url = 'https://ms2-rqe2.onrender.com/api/clientes';
+  private membresiaUrl = 'https://ms2-rqe2.onrender.com/api/membresias';
+
 
   constructor(private http: HttpClient) {}
 
