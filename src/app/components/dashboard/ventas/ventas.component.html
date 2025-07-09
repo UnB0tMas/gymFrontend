@@ -44,47 +44,50 @@
         </div>
 
         <!-- Productos -->
-        <div class="bg-gray-900 rounded-xl border border-gray-700/70 p-6">
+        <div *ngIf="detalles.length > 0" class="bg-gray-900 rounded-xl border border-gray-700/70 p-6">
           <div class="mb-2 flex items-center gap-3">
             <span class="text-gray-200 font-semibold">Productos</span>
             <button type="button" (click)="agregarDetalle()" class="ml-auto bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg flex items-center gap-1">
               <i class="fas fa-plus"></i> <span>Agregar</span>
             </button>
           </div>
-          <div *ngFor="let det of detalles.controls; let i = index" class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-3 items-end">
-            <div>
-              <label class="text-xs text-gray-400">Producto</label>
-              <select [formControlName]="'productoId'" class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full">
-                <option [ngValue]="null">Seleccione</option>
-                <option *ngFor="let p of productos" [value]="p.productoId">
-                  {{ p.nombre }} ({{ p.unidadMedida }}) - S/ {{ p.precio | number:'1.2-2' }} (stock: {{ p.stock }})
-                </option>
-              </select>
-            </div>
-            <div>
-              <label class="text-xs text-gray-400">Cantidad</label>
-              <input type="number" min="1" [formControlName]="'cant'"
-                     [max]="getStockProducto(det.value.productoId)"
-                     [disabled]="getStockProducto(det.value.productoId) === 0"
-                     class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full"
-                     placeholder="Cantidad"/>
-            </div>
-            <div>
-              <label class="text-xs text-gray-400">Precio</label>
-              <input type="text" [value]="getPrecioProducto(det.value.productoId) ? getPrecioProducto(det.value.productoId) : ''"
-                     disabled class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full"/>
-            </div>
-            <div>
-              <label class="text-xs text-gray-400">Subtotal</label>
-              <input type="text"
-                     [value]="(getPrecioProducto(det.value.productoId) * (det.value.cant || 0) ) | number:'1.2-2'"
-                     disabled class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full"/>
-            </div>
-            <div>
-              <button type="button" (click)="quitarDetalle(i)" [disabled]="detalles.length === 1"
-                      class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg flex items-center gap-1 w-full">
-                <i class="fas fa-trash"></i> Quitar
-              </button>
+          <div formArrayName="detalles">
+            <div *ngFor="let det of detalles.controls; let i = index" [formGroupName]="i"
+                 class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-3 items-end">
+              <div>
+                <label class="text-xs text-gray-400">Producto</label>
+                <select formControlName="productoId" class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full">
+                  <option [ngValue]="null">Seleccione</option>
+                  <option *ngFor="let p of productos" [value]="p.productoId">
+                    {{ p.nombre }} ({{ p.unidadMedida }}) - S/ {{ p.precio | number:'1.2-2' }} (stock: {{ p.stock }})
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs text-gray-400">Cantidad</label>
+                <input type="number" min="1" formControlName="cant"
+                       [max]="getStockProducto(det.value.productoId)"
+                       [disabled]="getStockProducto(det.value.productoId) === 0"
+                       class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full"
+                       placeholder="Cantidad"/>
+              </div>
+              <div>
+                <label class="text-xs text-gray-400">Precio</label>
+                <input type="text" [value]="getPrecioProducto(det.value.productoId) ? getPrecioProducto(det.value.productoId) : ''"
+                       disabled class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full"/>
+              </div>
+              <div>
+                <label class="text-xs text-gray-400">Subtotal</label>
+                <input type="text"
+                       [value]="(getPrecioProducto(det.value.productoId) * (det.value.cant || 0) ) | number:'1.2-2'"
+                       disabled class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full"/>
+              </div>
+              <div>
+                <button type="button" (click)="quitarDetalle(i)" [disabled]="detalles.length === 1"
+                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg flex items-center gap-1 w-full">
+                  <i class="fas fa-trash"></i> Quitar
+                </button>
+              </div>
             </div>
           </div>
         </div>
