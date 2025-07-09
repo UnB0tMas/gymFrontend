@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Empleado } from '../../models/dashboard/empleado.model';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class EmpleadoService {
-  private url = 'https://ms2-rqe2.onrender.com//api/empleados';
-
+  private url = `${environment.apiMs2}/empleados`;
 
   constructor(private http: HttpClient) {}
 

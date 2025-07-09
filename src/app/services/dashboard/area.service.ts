@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Area } from '../../models/dashboard/area.model';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AreaService {
-  private url = 'https://ms2-rqe2.onrender.com/api/areas';
+  private url = `${environment.apiMs2}/areas`;
 
   constructor(private http: HttpClient) {}
 
@@ -13,7 +14,6 @@ export class AreaService {
     return this.http.get<Area[]>(this.url);
   }
 
-  // SOLO áreas activas
   getActivas(): Observable<Area[]> {
     return this.http.get<Area[]>(`${this.url}/activas`);
   }

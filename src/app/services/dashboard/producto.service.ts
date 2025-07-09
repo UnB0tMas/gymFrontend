@@ -1,15 +1,14 @@
-//src/app/services/dashboard/producto.service.ts
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ProductoResponseDTO, ProductoCreateDTO } from '../../models/dashboard/producto.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductoService {
-  private readonly apiUrl = 'https://ms3-3enf.onrender.com/api/productos';
+  private readonly apiUrl = `${environment.apiMs3}/productos`;
 
   constructor(private http: HttpClient) {}
 
@@ -39,4 +38,3 @@ export class ProductoService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
-

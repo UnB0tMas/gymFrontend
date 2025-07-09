@@ -1,16 +1,14 @@
-// src/app/services/dashboard/cliente.service.ts
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Cliente } from '../../models/dashboard/cliente.model';
 import { Membresia } from '../../models/dashboard/membresia.model';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ClienteService {
-  private url = 'https://ms2-rqe2.onrender.com/api/clientes';
-  private membresiaUrl = 'https://ms2-rqe2.onrender.com/api/membresias';
-
+  private url = `${environment.apiMs2}/clientes`;
+  private membresiaUrl = `${environment.apiMs2}/membresias`;
 
   constructor(private http: HttpClient) {}
 

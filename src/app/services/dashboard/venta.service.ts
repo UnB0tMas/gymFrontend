@@ -1,14 +1,14 @@
-//src/app/services/dashboard/venta.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { VentaCreateDTO, VentaResponseDTO } from '../../models/dashboard/venta.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VentaService {
-  private readonly apiUrl = 'https://ms3-3enf.onrender.com/api/ventas';
+  private readonly apiUrl = `${environment.apiMs3}/ventas`;
 
   constructor(private http: HttpClient) {}
 
