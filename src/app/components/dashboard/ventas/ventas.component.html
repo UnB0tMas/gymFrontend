@@ -1,0 +1,171 @@
+<!-- src/app/components/ventas/ventas.component.html -->
+<app-sidebar></app-sidebar>
+<div class="ml-60 min-h-screen bg-gradient-to-br from-gray-900 to-black p-8">
+  <div class="max-w-5xl mx-auto">
+    <div class="flex items-center gap-3 mb-6">
+      <i class="fas fa-cash-register text-green-400 text-3xl"></i>
+      <h2 class="text-2xl font-bold text-white">Gestión de Ventas</h2>
+      <button
+        class="ml-auto bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg transition"
+        (click)="agregandoVenta = !agregandoVenta; resetForm()">
+        <i class="fas fa-plus"></i>
+        <span>Registrar venta</span>
+      </button>
+    </div>
+
+    <div *ngIf="error" class="bg-red-900/90 text-red-200 rounded-lg p-3 mb-4 shadow border border-red-700 flex items-center gap-2 animate-pulse">
+      <i class="fas fa-exclamation-circle"></i>
+      <span>{{ error }}</span>
+    </div>
+
+    <!-- Formulario de venta -->
+    <div *ngIf="agregandoVenta" class="bg-gray-800 rounded-2xl shadow-xl p-8 mb-8 border border-gray-700/80 animate__animated animate__fadeIn">
+      <form (ngSubmit)="guardarVenta()" [formGroup]="ventaForm" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label class="block text-gray-300 mb-1 font-semibold">Cliente</label>
+            <select formControlName="personaId" class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full">
+              <option [ngValue]="null">Selecciona cliente</option>
+              <option *ngFor="let c of clientes" [value]="c.clienteId">
+                {{ c.nombreCompleto }} ({{ c.documento }})
+              </option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1 font-semibold">Método de pago</label>
+            <select formControlName="metodoPago" class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full">
+              <option *ngFor="let m of metodoPagoList" [value]="m">{{ m }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1 font-semibold">Fecha</label>
+            <input type="text" disabled [value]="fechaActual | date:'yyyy-MM-dd HH:mm'" class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full"/>
+          </div>
+        </div>
+
+        <!-- Productos -->
+        <div class="bg-gray-900 rounded-xl border border-gray-700/70 p-6">
+          <div class="mb-2 flex items-center gap-3">
+            <span class="text-gray-200 font-semibold">Productos</span>
+            <button type="button" (click)="agregarDetalle()" class="ml-auto bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg flex items-center gap-1">
+              <i class="fas fa-plus"></i> <span>Agregar</span>
+            </button>
+          </div>
+          <div *ngFor="let det of detalles.controls; let i = index" class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-3 items-end">
+            <div>
+              <label class="text-xs text-gray-400">Producto</label>
+              <select [formControlName]="'productoId'" class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full">
+                <option [ngValue]="null">Seleccione</option>
+                <option *ngFor="let p of productos" [value]="p.productoId">
+                  {{ p.nombre }} ({{ p.unidadMedida }}) - S/ {{ p.precio | number:'1.2-2' }} (stock: {{ p.stock }})
+                </option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-gray-400">Cantidad</label>
+              <input type="number" min="1" [formControlName]="'cant'"
+                     [max]="getStockProducto(det.value.productoId)"
+                     [disabled]="getStockProducto(det.value.productoId) === 0"
+                     class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full"
+                     placeholder="Cantidad"/>
+            </div>
+            <div>
+              <label class="text-xs text-gray-400">Precio</label>
+              <input type="text" [value]="getPrecioProducto(det.value.productoId) ? getPrecioProducto(det.value.productoId) : ''"
+                     disabled class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full"/>
+            </div>
+            <div>
+              <label class="text-xs text-gray-400">Subtotal</label>
+              <input type="text"
+                     [value]="(getPrecioProducto(det.value.productoId) * (det.value.cant || 0) ) | number:'1.2-2'"
+                     disabled class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full"/>
+            </div>
+            <div>
+              <button type="button" (click)="quitarDetalle(i)" [disabled]="detalles.length === 1"
+                      class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg flex items-center gap-1 w-full">
+                <i class="fas fa-trash"></i> Quitar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Totales -->
+        <div class="flex flex-col md:flex-row md:justify-end gap-3 items-end mt-4">
+          <div class="bg-gray-900 px-6 py-3 rounded-lg border border-gray-700/70">
+            <div class="flex justify-between items-center gap-4">
+              <span class="text-gray-200">Subtotal:</span>
+              <span class="font-bold text-lg text-white">S/ {{ calcularSubtotal() | number:'1.2-2' }}</span>
+            </div>
+            <div class="flex justify-between items-center gap-4">
+              <span class="text-gray-200">IGV (18%):</span>
+              <span class="font-bold text-lg text-green-400">S/ {{ calcularIGV() | number:'1.2-2' }}</span>
+            </div>
+            <div class="flex justify-between items-center gap-4">
+              <span class="text-gray-200">Total ({{ getCantidadProductos() }} producto{{ getCantidadProductos() > 1 ? 's' : '' }}):</span>
+              <span class="font-bold text-2xl text-green-500">S/ {{ calcularTotal() | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Guardar -->
+        <button type="submit" [disabled]="cargando"
+                class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-black font-bold py-3 px-4 rounded-lg shadow-lg transition duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2 mt-6">
+          <i *ngIf="!cargando" class="fas fa-save"></i>
+          <span>
+            {{ cargando ? 'Guardando...' : 'Guardar Venta' }}
+          </span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Tabla de ventas -->
+    <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700/60 shadow-xl overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+          <thead class="bg-gradient-to-r from-green-700/90 to-green-900/90">
+          <tr>
+            <th class="px-4 py-3 text-left font-semibold tracking-wide">#</th>
+            <th class="px-4 py-3 text-left font-semibold tracking-wide">Cliente</th>
+            <th class="px-4 py-3 text-left font-semibold tracking-wide">Fecha</th>
+            <th class="px-4 py-3 text-left font-semibold tracking-wide">Total</th>
+            <th class="px-4 py-3 text-left font-semibold tracking-wide">Estado</th>
+            <th class="px-4 py-3 text-left font-semibold tracking-wide">Productos</th>
+            <th class="px-4 py-3 text-right font-semibold tracking-wide">Acciones</th>
+          </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-700/50">
+          <tr *ngFor="let v of ventas; let idx = index" class="hover:bg-green-900/20 border-b last:border-b-0 transition text-gray-200">
+            <td class="px-4 py-3">{{ idx + 1 }}</td>
+            <td class="px-4 py-3">
+              {{ v.nombreCliente || getNombreCliente(v.personaId) }}<br>
+              <span class="text-xs text-gray-300">{{ v.documentoCliente }}</span>
+            </td>
+            <td class="px-4 py-3">{{ v.fechaVenta | date:'yyyy-MM-dd HH:mm' }}</td>
+            <td class="px-4 py-3 font-semibold text-lg text-green-400">S/ {{ v.total | number:'1.2-2' }}</td>
+            <td class="px-4 py-3">
+                <span [ngClass]="v.estado ? 'bg-green-600/80' : 'bg-gray-500/80'" class="px-3 py-1 rounded-full text-xs font-semibold text-white">
+                  {{ v.estado ? 'Válida' : 'Anulada' }}
+                </span>
+            </td>
+            <td class="px-4 py-3">
+              <ul class="text-sm">
+                <li *ngFor="let d of v.detalles">
+                  {{ d.nombreProducto }} <span class="text-green-300">x{{ d.cant }}</span>
+                </li>
+              </ul>
+            </td>
+            <td class="px-4 py-3 text-right">
+              <button (click)="eliminarVenta(v.ventaId)" class="text-red-400 hover:text-red-200 transition">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="ventas.length === 0">
+            <td colspan="7" class="text-center text-gray-400 py-6">No hay ventas registradas.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

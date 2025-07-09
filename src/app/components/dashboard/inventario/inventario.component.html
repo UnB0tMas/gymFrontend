@@ -1,0 +1,151 @@
+<!-- src/app/components/dashboard/inventario/inventario.component.html -->
+<app-sidebar></app-sidebar>
+<div class="ml-60 min-h-screen bg-gradient-to-br from-gray-900 to-black p-8">
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <!-- ========== CATEGORÍAS ========== -->
+    <div class="bg-gray-800/90 rounded-2xl shadow-xl p-7 border border-gray-700/60">
+      <div class="flex items-center gap-3 mb-6">
+        <i class="fas fa-list-alt text-yellow-400 text-2xl"></i>
+        <h2 class="text-xl font-bold text-white">Gestión de Categorías</h2>
+      </div>
+      <form [formGroup]="formCategoria" (ngSubmit)="guardarCategoria()" class="space-y-4 mb-4">
+        <div>
+          <input type="text" placeholder="Nombre" formControlName="nombre"
+                 class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-yellow-400 focus:border-transparent"/>
+        </div>
+        <div>
+          <input type="text" placeholder="Descripción" formControlName="descripcion"
+                 class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-yellow-400 focus:border-transparent"/>
+        </div>
+        <div class="flex gap-2">
+          <button type="submit" [disabled]="formCategoria.invalid"
+                  class="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-bold py-2 px-4 rounded-lg shadow transition">
+            {{ editCatId ? 'Actualizar' : 'Agregar' }}
+          </button>
+          <button type="button" (click)="resetCategoria()"
+                  class="bg-gray-600 text-white px-4 py-2 rounded-lg shadow hover:bg-gray-700">
+            Limpiar
+          </button>
+        </div>
+        <div *ngIf="errorCat" class="text-yellow-300 text-sm mt-2">{{ errorCat }}</div>
+      </form>
+      <div class="mb-2">
+        <input type="text" [(ngModel)]="buscandoCat" placeholder="Buscar categoría..."
+               class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full mb-1 focus:ring-2 focus:ring-yellow-400 focus:border-transparent"/>
+        <button (click)="buscarCategoria()" class="text-sm bg-yellow-700 hover:bg-yellow-800 text-white px-4 py-1 rounded">Buscar</button>
+      </div>
+      <div *ngIf="loadingCat" class="text-yellow-200 mb-2 animate-pulse">Cargando...</div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-white text-sm">
+          <thead>
+          <tr>
+            <th class="px-2 py-2 text-left">Nombre</th>
+            <th class="px-2 py-2 text-left">Descripción</th>
+            <th class="px-2 py-2 text-left">Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let cat of categorias" class="border-b border-gray-700">
+            <td class="px-2 py-2">{{ cat.nombre }}</td>
+            <td class="px-2 py-2">{{ cat.descripcion }}</td>
+            <td class="px-2 py-2 flex gap-2">
+              <button (click)="editarCategoria(cat)" class="text-yellow-300 hover:text-yellow-200"><i class="fas fa-edit"></i></button>
+              <button (click)="eliminarCategoria(cat.categoriaPId!)" class="text-red-400 hover:text-red-200"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr *ngIf="!categorias.length && !loadingCat">
+            <td colspan="3" class="text-center text-gray-400 py-4">No hay categorías</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========== PRODUCTOS ========== -->
+    <div class="bg-gray-800/90 rounded-2xl shadow-xl p-7 border border-gray-700/60">
+      <div class="flex items-center gap-3 mb-6">
+        <i class="fas fa-cubes text-green-400 text-2xl"></i>
+        <h2 class="text-xl font-bold text-white">Gestión de Productos</h2>
+      </div>
+      <form [formGroup]="formProducto" (ngSubmit)="guardarProducto()" class="space-y-4 mb-4">
+        <div>
+          <input type="text" placeholder="Nombre" formControlName="nombre"
+                 class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-green-400 focus:border-transparent"/>
+        </div>
+        <div>
+          <select formControlName="categoriaPId"
+                  class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-green-400 focus:border-transparent">
+            <option [ngValue]="null" disabled>-- Categoría --</option>
+            <option *ngFor="let cat of categorias" [value]="cat.categoriaPId">{{ cat.nombre }}</option>
+          </select>
+        </div>
+        <div>
+          <input type="text" placeholder="Unidad de Medida" formControlName="unidadMedida"
+                 class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-green-400 focus:border-transparent"/>
+        </div>
+        <div>
+          <input type="number" placeholder="Precio" formControlName="precio" min="0" step="0.01"
+                 class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-green-400 focus:border-transparent"/>
+        </div>
+        <div>
+          <input type="number" placeholder="Stock" formControlName="stock" min="0"
+                 class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-green-400 focus:border-transparent"/>
+        </div>
+        <div class="flex gap-2">
+          <button type="submit" [disabled]="formProducto.invalid"
+                  class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-black font-bold py-2 px-4 rounded-lg shadow transition">
+            {{ editProdId ? 'Actualizar' : 'Agregar' }}
+          </button>
+          <button type="button" (click)="resetProducto()"
+                  class="bg-gray-600 text-white px-4 py-2 rounded-lg shadow hover:bg-gray-700">
+            Limpiar
+          </button>
+        </div>
+        <div *ngIf="errorProd" class="text-green-300 text-sm mt-2">{{ errorProd }}</div>
+      </form>
+      <div class="mb-2">
+        <input type="text" [(ngModel)]="buscandoProd" placeholder="Buscar producto..."
+               class="border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full mb-1 focus:ring-2 focus:ring-green-400 focus:border-transparent"/>
+        <button (click)="buscarProducto()" class="text-sm bg-green-700 hover:bg-green-800 text-white px-4 py-1 rounded">Buscar</button>
+      </div>
+      <div *ngIf="loadingProd" class="text-green-200 mb-2 animate-pulse">Cargando...</div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-white text-sm">
+          <thead>
+          <tr>
+            <th class="px-2 py-2 text-left">Nombre</th>
+            <th class="px-2 py-2 text-left">Categoría</th>
+            <th class="px-2 py-2 text-left">Unidad</th>
+            <th class="px-2 py-2 text-left">Precio</th>
+            <th class="px-2 py-2 text-left">Stock</th>
+            <th class="px-2 py-2 text-left">Estado</th>
+            <th class="px-2 py-2 text-left">Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let prod of productos" class="border-b border-gray-700">
+            <td class="px-2 py-2">{{ prod.nombre }}</td>
+            <td class="px-2 py-2">{{ prod.nombreCategoria }}</td>
+            <td class="px-2 py-2">{{ prod.unidadMedida }}</td>
+            <td class="px-2 py-2">S/ {{ prod.precio | number: '1.2-2' }}</td>
+            <td class="px-2 py-2">{{ prod.stock }}</td>
+            <td class="px-2 py-2">
+              <span *ngIf="prod.estado" class="bg-green-600/80 px-3 py-1 rounded-full text-xs font-semibold">Activo</span>
+              <span *ngIf="!prod.estado" class="bg-gray-500/80 px-3 py-1 rounded-full text-xs font-semibold">Inactivo</span>
+            </td>
+            <td class="px-2 py-2 flex gap-2">
+              <button (click)="editarProducto(prod)" class="text-green-300 hover:text-green-200"><i class="fas fa-edit"></i></button>
+              <button (click)="eliminarProducto(prod.productoId!)" class="text-red-400 hover:text-red-200"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+          <tr *ngIf="!productos.length && !loadingProd">
+            <td colspan="7" class="text-center text-gray-400 py-4">No hay productos</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

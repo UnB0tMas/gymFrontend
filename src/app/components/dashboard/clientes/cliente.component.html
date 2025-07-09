@@ -1,0 +1,204 @@
+<!-- src/app/components/dashboard/clientes/cliente.component.html-->
+<app-sidebar></app-sidebar>
+<div class="ml-60 min-h-screen bg-gradient-to-br from-gray-900 to-black p-8">
+  <div class="max-w-5xl mx-auto">
+
+    <div class="flex items-center gap-3 mb-6">
+      <i class="fas fa-users text-red-600 text-3xl"></i>
+      <h2 class="text-2xl font-bold text-white">Gestión de Clientes</h2>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div *ngIf="error" class="bg-red-800/80 text-red-200 rounded-lg p-3 mb-4 shadow border border-red-700 flex items-center gap-2 animate-pulse">
+      <i class="fas fa-exclamation-circle"></i>
+      <span>{{ error }}</span>
+    </div>
+
+    <!-- Card de formulario -->
+    <div class="bg-gray-800 rounded-2xl shadow-xl p-8 mb-8 border border-gray-700/80">
+      <form (ngSubmit)="guardar()" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Nombre -->
+          <div class="relative">
+            <i class="fas fa-user absolute left-3 top-1/2 -translate-y-1/2 text-red-500"></i>
+            <input
+              type="text"
+              [(ngModel)]="nuevoCliente.persona.nombre"
+              name="nombre"
+              placeholder="Nombre"
+              required
+              class="pl-10 border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            />
+          </div>
+          <!-- Apellido Paterno -->
+          <div class="relative">
+            <i class="fas fa-user-tag absolute left-3 top-1/2 -translate-y-1/2 text-red-500"></i>
+            <input
+              type="text"
+              [(ngModel)]="nuevoCliente.persona.apellidoP"
+              name="apellidoP"
+              placeholder="Apellido Paterno"
+              required
+              class="pl-10 border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            />
+          </div>
+          <!-- Apellido Materno -->
+          <div class="relative">
+            <i class="fas fa-user-tag absolute left-3 top-1/2 -translate-y-1/2 text-red-500"></i>
+            <input
+              type="text"
+              [(ngModel)]="nuevoCliente.persona.apellidoM"
+              name="apellidoM"
+              placeholder="Apellido Materno"
+              class="pl-10 border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            />
+          </div>
+          <!-- Fecha de Nacimiento -->
+          <div class="relative">
+            <i class="fas fa-calendar-alt absolute left-3 top-1/2 -translate-y-1/2 text-red-500"></i>
+            <input
+              type="date"
+              [(ngModel)]="nuevoCliente.persona.fechaNacimiento"
+              name="fechaNacimiento"
+              required
+              class="pl-10 border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            />
+          </div>
+          <!-- Tipo Documento -->
+          <div class="relative">
+            <i class="fas fa-id-card absolute left-3 top-1/2 -translate-y-1/2 text-red-500"></i>
+            <input
+              type="text"
+              [(ngModel)]="nuevoCliente.persona.docIdentidad"
+              name="docIdentidad"
+              placeholder="Tipo Documento"
+              class="pl-10 border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            />
+          </div>
+          <!-- Número Documento -->
+          <div class="relative">
+            <i class="fas fa-hashtag absolute left-3 top-1/2 -translate-y-1/2 text-red-500"></i>
+            <input
+              type="text"
+              [(ngModel)]="nuevoCliente.persona.ndeDocumento"
+              name="ndeDocumento"
+              placeholder="Número Documento"
+              class="pl-10 border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            />
+          </div>
+          <!-- Teléfono -->
+          <div class="relative">
+            <i class="fas fa-phone absolute left-3 top-1/2 -translate-y-1/2 text-red-500"></i>
+            <input
+              type="text"
+              [(ngModel)]="nuevoCliente.persona.telefono"
+              name="telefono"
+              placeholder="Teléfono"
+              class="pl-10 border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            />
+          </div>
+          <!-- Peso Inicial -->
+          <div class="relative">
+            <i class="fas fa-weight absolute left-3 top-1/2 -translate-y-1/2 text-red-500"></i>
+            <input
+              type="number"
+              step="0.1"
+              [(ngModel)]="nuevoCliente.pesoInicio"
+              name="pesoInicio"
+              placeholder="Peso Inicial"
+              required
+              class="pl-10 border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            />
+          </div>
+          <!-- Membresía -->
+          <div class="relative">
+            <i class="fas fa-id-card absolute left-3 top-1/2 -translate-y-1/2 text-red-500"></i>
+            <select
+              [(ngModel)]="nuevoCliente.membresia"
+              name="membresia"
+              class="pl-10 border border-gray-700 bg-gray-700 text-white rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            >
+              <option [ngValue]="null">Sin membresía</option>
+              <option *ngFor="let m of membresias" [ngValue]="m">
+                {{ m.nombre }}
+                <span *ngIf="m.precio"> - S/ {{ m.precio }}</span>
+              </option>
+            </select>
+          </div>
+        </div>
+        <button
+          type="submit"
+          [disabled]="cargando"
+          class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2"
+        >
+          <i *ngIf="!cargando" class="fas fa-save"></i>
+          <span>{{ cargando ? 'Guardando...' : 'Guardar Cliente' }}</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Tabla de clientes mejorada -->
+    <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700/60 shadow-xl overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+          <thead class="bg-gradient-to-r from-red-700/90 to-red-800/90">
+          <tr>
+            <th class="px-6 py-4 text-left font-semibold tracking-wide">
+              <div class="flex items-center gap-2">
+                <i class="fas fa-user-circle"></i>
+                <span>Nombre</span>
+              </div>
+            </th>
+            <th class="px-6 py-4 text-left font-semibold tracking-wide">
+              <div class="flex items-center gap-2">
+                <i class="fas fa-id-card"></i>
+                <span>Documento</span>
+              </div>
+            </th>
+            <th class="px-6 py-4 text-left font-semibold tracking-wide">
+              <div class="flex items-center gap-2">
+                <i class="fas fa-weight-scale"></i>
+                <span>Peso Inicial</span>
+              </div>
+            </th>
+            <th class="px-6 py-4 text-left font-semibold tracking-wide">
+              <div class="flex items-center gap-2">
+                <i class="fas fa-id-card"></i>
+                <span>Membresía</span>
+              </div>
+            </th>
+            <th class="px-6 py-4 text-left font-semibold tracking-wide">
+              <div class="flex items-center gap-2">
+                <i class="fas fa-phone"></i>
+                <span>Teléfono</span>
+              </div>
+            </th>
+            <th class="px-6 py-4 text-right font-semibold tracking-wide">Acciones</th>
+          </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-700/50">
+          <tr *ngFor="let c of clientes" class="hover:bg-red-900/30 border-b last:border-b-0 transition text-gray-200">
+            <td class="px-4 py-3">{{ c.persona.nombre }} {{ c.persona.apellidoP }}</td>
+            <td class="px-4 py-3">{{ c.persona.docIdentidad }} - {{ c.persona.ndeDocumento }}</td>
+            <td class="px-4 py-3">{{ c.pesoInicio }} kg</td>
+            <td class="px-4 py-3">
+              <span *ngIf="c.membresia; else noMembresia">{{ c.membresia.nombre }}</span>
+              <ng-template #noMembresia><span class="italic text-gray-400">Sin membresía</span></ng-template>
+            </td>
+            <td class="px-4 py-3">{{ c.persona.telefono }}</td>
+            <td class="px-4 py-3">
+              <button
+                (click)="borrar(c.clienteId!)"
+                class="text-red-400 hover:text-red-200 transition flex items-center gap-1"
+                [disabled]="cargando"
+              >
+                <i class="fas fa-trash"></i> Eliminar
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

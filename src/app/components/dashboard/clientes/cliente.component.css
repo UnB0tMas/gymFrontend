@@ -1,0 +1,6 @@
+/* Puedes retirar este archivo si todo el styling es con Tailwind */
+
+/* Ejemplo simple: darle fondo ligero a la sección */
+.content {
+  background-color: #fafafa;
+}
