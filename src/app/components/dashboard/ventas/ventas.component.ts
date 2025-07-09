@@ -6,6 +6,7 @@ import { ProductoResponseDTO } from '../../../models/dashboard/producto.model';
 import { VentaService } from '../../../services/dashboard/venta.service';
 import { ProductoService } from '../../../services/dashboard/producto.service';
 import { HttpClient } from '@angular/common/http';
+import {environment} from "../../../../environments/environment";
 
 interface ClienteLocal {
   clienteId: number;
@@ -66,11 +67,12 @@ export class VentasComponent implements OnInit {
     });
   }
   cargarClientes() {
-    this.http.get<ClienteLocal[]>('http://localhost:8081/api/clientes-local').subscribe({
+    this.http.get<ClienteLocal[]>(`${environment.apiMs3}/clientes-local`).subscribe({
       next: (list) => this.clientes = list.filter(c => c.estado),
       error: () => this.error = 'Error cargando clientes'
     });
   }
+
 
   // --------- FORM LOGIC -----------
   get detalles(): FormArray {
