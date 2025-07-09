@@ -6,7 +6,7 @@ import { ProductoResponseDTO } from '../../../models/dashboard/producto.model';
 import { VentaService } from '../../../services/dashboard/venta.service';
 import { ProductoService } from '../../../services/dashboard/producto.service';
 import { HttpClient } from '@angular/common/http';
-import {environment} from "../../../../environments/environment";
+import { environment } from "../../../../environments/environment";
 
 interface ClienteLocal {
   clienteId: number;
@@ -50,7 +50,10 @@ export class VentasComponent implements OnInit {
     this.cargarVentas();
     this.cargarProductos();
     this.cargarClientes();
-    this.agregarDetalle();
+    // SIEMPRE asegura que haya al menos un detalle antes de render
+    if (this.detalles.length === 0) {
+      this.agregarDetalle();
+    }
   }
 
   // ------------ DATA --------------
@@ -73,7 +76,6 @@ export class VentasComponent implements OnInit {
     });
   }
 
-
   // --------- FORM LOGIC -----------
   get detalles(): FormArray {
     return this.ventaForm.get('detalles') as FormArray;
@@ -85,7 +87,13 @@ export class VentasComponent implements OnInit {
     }));
   }
   quitarDetalle(i: number) {
-    if (this.detalles.length > 1) this.detalles.removeAt(i);
+    if (this.detalles.length > 1) {
+      this.detalles.removeAt(i);
+    }
+    // Nunca dejar el array vacío
+    if (this.detalles.length === 0) {
+      this.agregarDetalle();
+    }
   }
 
   resetForm() {
@@ -94,7 +102,6 @@ export class VentasComponent implements OnInit {
     this.agregarDetalle();
     this.error = null;
     this.fechaActual = new Date(); // Actualiza fecha
-    // *No cerramos el formulario aquí, para mayor usabilidad*
   }
 
   calcularTotal(): number {
